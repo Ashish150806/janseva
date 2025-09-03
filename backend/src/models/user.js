@@ -1,19 +1,25 @@
+// backend/src/models/User.js
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    email: { type: String, unique: true, sparse: true }, // allow anonymous users without email
+    email: { type: String, unique: true, sparse: true },
     password: { type: String, select: false },
-    role: { type: String, enum: ["citizen", "official", "contractor"], default: "citizen" },
+    role: {
+      type: String,
+      enum: ["citizen", "official", "contractor"],
+      default: "citizen",
+    },
     phone: String,
     department: String, // for officials
-    company: String     // for contractors
+    company: String,    // for contractors
   },
   { timestamps: true }
 );
 
+// 🔐 Hash password before saving
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password") || !this.password) return next();
   const salt = await bcrypt.genSalt(10);
@@ -21,6 +27,7 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
+// 🔑 Compare given password with hashed one
 UserSchema.methods.comparePassword = async function (candidate) {
   return this.password ? bcrypt.compare(candidate, this.password) : false;
 };
