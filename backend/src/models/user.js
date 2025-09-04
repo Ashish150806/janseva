@@ -5,8 +5,8 @@ import bcrypt from "bcryptjs";
 const UserSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    email: { type: String, unique: true, sparse: true },
-    password: { type: String, select: false },
+    email: { type: String, unique: true, sparse: true, required: true },
+    password: { type: String, select: false, required: true },
     role: {
       type: String,
       enum: ["citizen", "official", "contractor"],
@@ -15,6 +15,11 @@ const UserSchema = new mongoose.Schema(
     phone: String,
     department: String, // for officials
     company: String,    // for contractors
+
+    // 🔐 OTP verification fields
+    otp: { type: String, select: false },
+    otpExpires: { type: Date, select: false },
+    isVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
