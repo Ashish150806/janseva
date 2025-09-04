@@ -1,25 +1,33 @@
 import { useEffect, useState } from "react";
-import { getAllReports, assignTask } from "../api/adminApi";
+import { adminApi } from "../api"; // ✅ import from centralized index
 
 export default function Dashboard() {
   const [reports, setReports] = useState([]);
-  const [contractorId, setContractorId] = useState("");
+  const [selectedContractor, setSelectedContractor] = useState({});
 
   useEffect(() => {
     async function fetchReports() {
-      const res = await getAllReports();
-      setReports(res);
+      try {
+        const res = await adminApi.getAllReports();
+        setReports(res);
+      } catch (err) {
+        console.error("Failed to fetch reports:", err);
+        alert("Failed to fetch reports.");
+      }
     }
     fetchReports();
   }, []);
 
-  async function handleAssign(reportId) {
-    if (!contractorId) return alert("Enter contractor ID first");
+  async function handleAssign(reportId, contractorId) {
+    if (!contractorId) return alert("Please select a contractor!");
     try {
-      await assignTask(reportId, contractorId);
-      alert("Task assigned!");
+      await adminApi.assignTask(reportId, contractorId);
+      alert("Task assigned successfully!");
+      const res = await adminApi.getAllReports();
+      setReports(res);
     } catch (err) {
-      alert("Failed to assign: " + err.message);
+      console.error("Assignment error:", err);
+      alert("Failed to assign task: " + err.message);
     }
   }
 
@@ -32,26 +40,37 @@ export default function Dashboard() {
         <p className="text-gray-600">No reports available.</p>
       ) : (
         <div className="space-y-4">
-          {reports.map((r) => (
-            <div key={r._id} className="card">
-              <h3 className="font-bold">{r.title}</h3>
-              <p className="text-gray-600">{r.description}</p>
-              <p className="text-sm text-gray-500">Status: {r.status}</p>
-              <div className="flex items-center mt-2 space-x-2">
-                <input
-                  type="text"
-                  placeholder="Contractor ID"
-                  value={contractorId}
-                  onChange={(e) => setContractorId(e.target.value)}
-                  className="input flex-1"
-                />
-                <button
-                  onClick={() => handleAssign(r._id)}
-                  className="btn btn-primary"
-                >
-                  Assign
-                </button>
-              </div>
+          {reports.map((report) => (
+            <div
+              key={report._id}
+              className="card p-4 border rounded shadow-sm flex flex-col gap-2"
+            >
+              <h3 className="font-bold text-lg">{report.title}</h3>
+              <p className="text-gray-600">{report.description}</p>
+
+              <select
+                value={selectedContractor[report._id] || ""}
+                onChange={(e) =>
+                  setSelectedContractor((prev) => ({
+                    ...prev,
+                    [report._id]: e.target.value,
+                  }))
+                }
+                className="input mt-2"
+              >
+                <option value="">Select Contractor</option>
+                <option value="contractor1">Contractor 1</option>
+                <option value="contractor2">Contractor 2</option>
+              </select>
+
+              <button
+                onClick={() =>
+                  handleAssign(report._id, selectedContractor[report._id])
+                }
+                className="btn btn-accent mt-2"
+              >
+                Assign Task
+              </button>
             </div>
           ))}
         </div>

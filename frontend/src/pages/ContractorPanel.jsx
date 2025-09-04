@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAssignedReports, uploadCompletionProof } from "../api/contractorApi";
+import { contractorApi } from "../api"; // ✅ import from centralized index
 
 export default function ContractorPanel() {
   const [tasks, setTasks] = useState([]);
@@ -7,18 +7,26 @@ export default function ContractorPanel() {
 
   useEffect(() => {
     async function fetchTasks() {
-      const res = await getAssignedReports();
-      setTasks(res);
+      try {
+        const res = await contractorApi.getAssignedReports();
+        setTasks(res);
+      } catch (err) {
+        console.error("Failed to fetch tasks:", err);
+        alert("Failed to fetch tasks.");
+      }
     }
     fetchTasks();
   }, []);
 
   async function handleUpload(reportId) {
-    if (!proofs[reportId]) return alert("Please upload a photo first!");
+    const file = proofs[reportId];
+    if (!file) return alert("Please upload a photo first!");
     try {
-      await uploadCompletionProof(reportId, proofs[reportId]);
+      await contractorApi.uploadCompletionProof(reportId, file);
       alert("Proof uploaded successfully!");
+      setProofs((prev) => ({ ...prev, [reportId]: null }));
     } catch (err) {
+      console.error("Upload error:", err);
       alert("Upload failed: " + err.message);
     }
   }
@@ -33,7 +41,7 @@ export default function ContractorPanel() {
       ) : (
         <div className="space-y-4">
           {tasks.map((task) => (
-            <div key={task._id} className="card">
+            <div key={task._id} className="card p-4 border rounded shadow-sm">
               <h3 className="font-bold text-lg">{task.title}</h3>
               <p className="text-gray-600">{task.description}</p>
               <input
