@@ -2,23 +2,22 @@ import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/user.js";
-import { env } from "../config/env.js"; // make sure env has EMAIL_USER + EMAIL_PASS
 
 // ✉️ Setup transporter directly here
 const transporter = nodemailer.createTransport({
-  host: env.SMTP_HOST,
-  port: env.SMTP_PORT,
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: process.env.SMTP_PORT || 465,
   secure: true, // true for 465, false for 587
   auth: {
-    user: env.EMAIL_USER,
-    pass: env.EMAIL_PASS,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
 // ✉️ Function to send OTP
 async function sendOtpEmail(to, otp) {
   const mailOptions = {
-    from: `"JanSeva Platform" <${env.EMAIL_USER}>`,
+    from: `"JanSeva Platform" <${process.env.EMAIL_USER}>`,
     to,
     subject: "Your OTP Verification Code",
     text: `Your OTP is: ${otp}. It will expire in 10 minutes.`,
@@ -40,7 +39,7 @@ async function sendOtpEmail(to, otp) {
 function sign(user) {
   return jwt.sign(
     { id: user._id, role: user.role, name: user.name },
-    env.JWT_SECRET,
+    process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
 }
@@ -114,6 +113,7 @@ export async function verifyOtp(req, res, next) {
       user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
+    console.error("❌ Register error:", err);
     next(err);
   }
 }
@@ -144,6 +144,7 @@ export async function login(req, res, next) {
       user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
+    console.error("❌ Register error:", err);
     next(err);
   }
 }
