@@ -25,29 +25,33 @@ export default function Dashboard() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Admin Dashboard</h2>
+      <h2 className="text-2xl font-heading font-bold mb-4 text-primary">
+        Admin Dashboard
+      </h2>
       {reports.length === 0 ? (
-        <p>No reports available.</p>
+        <p className="text-gray-600">No reports available.</p>
       ) : (
         <div className="space-y-4">
           {reports.map((r) => (
-            <div key={r._id} className="border p-4 rounded shadow bg-white">
+            <div key={r._id} className="card">
               <h3 className="font-bold">{r.title}</h3>
               <p className="text-gray-600">{r.description}</p>
               <p className="text-sm text-gray-500">Status: {r.status}</p>
-              <input
-                type="text"
-                placeholder="Contractor ID"
-                value={contractorId}
-                onChange={(e) => setContractorId(e.target.value)}
-                className="border p-1 mt-2 w-1/2"
-              />
-              <button
-                onClick={() => handleAssign(r._id)}
-                className="bg-indigo-600 text-white px-3 py-1 rounded ml-2"
-              >
-                Assign
-              </button>
+              <div className="flex items-center mt-2 space-x-2">
+                <input
+                  type="text"
+                  placeholder="Contractor ID"
+                  value={contractorId}
+                  onChange={(e) => setContractorId(e.target.value)}
+                  className="input flex-1"
+                />
+                <button
+                  onClick={() => handleAssign(r._id)}
+                  className="btn btn-primary"
+                >
+                  Assign
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -1,22 +1,27 @@
-// src/api/adminApi.js
+// src/api/contractorApi.js
 import axios from "axios";
-const API_URL = "http://localhost:5000/api/v1/admin";
 
-async function getAllReports() {
-  const res = await axios.get(`${API_URL}/reports`, {
+const API_URL = "http://localhost:5000/api/v1/contractor";
+
+// ✅ Fetch reports assigned to the contractor
+export async function getAssignedReports() {
+  const res = await axios.get(`${API_URL}/assigned-reports`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
   return res.data;
 }
 
-async function assignTask(reportId, contractorId) {
-  const res = await axios.post(
-    `${API_URL}/assign`,
-    { reportId, contractorId },
-    { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-  );
+// ✅ Upload proof of task completion
+export async function uploadCompletionProof(reportId, proofFile) {
+  const formData = new FormData();
+  formData.append("proof", proofFile);
+
+  const res = await axios.post(`${API_URL}/upload-proof/${reportId}`, formData, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
   return res.data;
 }
-
-const adminApi = { getAllReports, assignTask };
-export default adminApi; // 👈 this matches your index.js

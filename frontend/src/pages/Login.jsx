@@ -17,24 +17,24 @@ export default function Login() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Login</h2>
+    <div className="max-w-md mx-auto mt-10 card">
+      <h2 className="text-xl font-bold mb-4 text-primary">Login</h2>
       <form onSubmit={handleLogin} className="space-y-3">
         <input
           type="email"
           placeholder="Email"
-          className="w-full border p-2"
+          className="input"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
-          className="w-full border p-2"
+          className="input"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="w-full bg-indigo-600 text-white p-2 rounded">Login</button>
+        <button className="btn btn-primary w-full">Login</button>
       </form>
     </div>
   );

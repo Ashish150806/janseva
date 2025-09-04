@@ -25,14 +25,16 @@ export default function ContractorPanel() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Assigned Tasks</h2>
+      <h2 className="text-2xl font-heading font-bold mb-4 text-primary">
+        Assigned Tasks
+      </h2>
       {tasks.length === 0 ? (
-        <p>No tasks assigned.</p>
+        <p className="text-gray-600">No tasks assigned.</p>
       ) : (
         <div className="space-y-4">
           {tasks.map((task) => (
-            <div key={task._id} className="border rounded p-4 shadow">
-              <h3 className="font-bold">{task.title}</h3>
+            <div key={task._id} className="card">
+              <h3 className="font-bold text-lg">{task.title}</h3>
               <p className="text-gray-600">{task.description}</p>
               <input
                 type="file"
@@ -40,11 +42,11 @@ export default function ContractorPanel() {
                 onChange={(e) =>
                   setProofs({ ...proofs, [task._id]: e.target.files[0] })
                 }
-                className="mt-2"
+                className="input mt-2"
               />
               <button
                 onClick={() => handleUpload(task._id)}
-                className="bg-green-600 text-white px-3 py-1 mt-2 rounded"
+                className="btn btn-accent mt-3"
               >
                 Upload Proof
               </button>

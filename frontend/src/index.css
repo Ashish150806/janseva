@@ -1,17 +1,44 @@
-/* src/index.css */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
+
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ✅ Global Body Styles */
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f9;
-  color: #333;
+  @apply bg-gray-100 text-gray-900 font-sans;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+/* ✅ Reusable Button Styles */
+.btn {
+  @apply px-4 py-2 rounded font-medium transition duration-200;
+}
+.btn-primary {
+  @apply bg-primary text-white hover:bg-primary-dark;
+}
+.btn-secondary {
+  @apply bg-secondary text-white hover:bg-gray-700;
+}
+.btn-accent {
+  @apply bg-accent text-white hover:bg-green-600;
+}
+.btn-danger {
+  @apply bg-danger text-white hover:bg-red-600;
+}
+
+/* ✅ Card Component */
+.card {
+  @apply bg-white rounded-lg shadow-card p-4;
+}
+
+/* ✅ Form Inputs */
+.input {
+  @apply w-full border rounded p-2 focus:ring-2 focus:ring-primary focus:outline-none;
+}
+
+/* ✅ Navbar Links */
+.nav-link {
+  @apply text-white hover:underline;
 }

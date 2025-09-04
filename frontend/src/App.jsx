@@ -1,32 +1,26 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import Layout from "../components/Layout";
+
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SubmitReport from "./pages/SubmitReport";
 import Reports from "./pages/Reports";
+import Dashboard from "./pages/Dashboard";
+import ContractorPanel from "./pages/ContractorPanel";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-indigo-600 text-white p-4 flex justify-between">
-        <Link to="/">Home</Link>
-        <div className="space-x-4">
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
-          <Link to="/submit">Report</Link>
-          <Link to="/reports">Reports</Link>
-        </div>
-      </nav>
-
+    <Layout>
       <Routes>
-        <Route
-          path="/"
-          element={<h1 className="p-6">Welcome to Civic Issue Platform</h1>}
-        />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/submit" element={<SubmitReport />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/contractor" element={<ContractorPanel />} />
       </Routes>
-    </div>
+    </Layout>
   );
 }
