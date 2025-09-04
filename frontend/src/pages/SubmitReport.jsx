@@ -22,28 +22,29 @@ export default function SubmitReport() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Submit Report</h2>
+    <div className="max-w-md mx-auto mt-10 card">
+      <h2 className="text-xl font-bold mb-4 text-primary">Submit Report</h2>
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text"
           placeholder="Title"
-          className="w-full border p-2"
+          className="input"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
         />
         <textarea
           placeholder="Description"
-          className="w-full border p-2"
+          className="input"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
         />
         <input
           type="file"
           accept="image/*"
+          className="input"
           onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
         />
-        <button className="w-full bg-indigo-600 text-white p-2 rounded">Submit</button>
+        <button className="btn btn-primary w-full">Submit</button>
       </form>
     </div>
   );

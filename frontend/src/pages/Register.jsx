@@ -16,32 +16,32 @@ export default function Register() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Register</h2>
+    <div className="max-w-md mx-auto mt-10 card">
+      <h2 className="text-xl font-bold mb-4 text-primary">Register</h2>
       <form onSubmit={handleRegister} className="space-y-3">
         <input
           type="text"
           placeholder="Name"
-          className="w-full border p-2"
+          className="input"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
         <input
           type="email"
           placeholder="Email"
-          className="w-full border p-2"
+          className="input"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
         <input
           type="password"
           placeholder="Password"
-          className="w-full border p-2"
+          className="input"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
         <select
-          className="w-full border p-2"
+          className="input"
           value={form.role}
           onChange={(e) => setForm({ ...form, role: e.target.value })}
         >
@@ -49,7 +49,7 @@ export default function Register() {
           <option value="official">Official</option>
           <option value="contractor">Contractor</option>
         </select>
-        <button className="w-full bg-indigo-600 text-white p-2 rounded">Register</button>
+        <button className="btn btn-primary w-full">Register</button>
       </form>
     </div>
   );
