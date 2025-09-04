@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { register, login, verifyOtp } from "../controllers/authController.js";
+import * as authController from "../controllers/authController.js";
 
 const router = Router();
 
-// Register user (send OTP)
-router.post("/register", register);
+// 📝 Register user (sends OTP)
+router.post("/register", authController.register);
 
-// Verify OTP after registration
-router.post("/verify-otp", verifyOtp);
+// 🔑 Verify OTP after registration
+router.post("/verify-otp", authController.verifyOtp);
 
-// Login with password (only if verified)
-router.post("/login", login);
+// 🔓 Login (only after verification)
+router.post("/login", authController.login);
 
 export default router;

@@ -1,39 +1,7 @@
-import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/user.js";
-
-// ✉️ Setup transporter directly here
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: process.env.SMTP_PORT || 465,
-  secure: true, // true for 465, false for 587
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-// ✉️ Function to send OTP
-async function sendOtpEmail(to, otp) {
-  const mailOptions = {
-    from: `"JanSeva Platform" <${process.env.EMAIL_USER}>`,
-    to,
-    subject: "Your OTP Verification Code",
-    text: `Your OTP is: ${otp}. It will expire in 10 minutes.`,
-    html: `
-      <div style="font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9;">
-        <h2 style="color: #2E86C1;">Welcome to JanSeva 👋</h2>
-        <p>Please use the following OTP to verify your account:</p>
-        <h1 style="color:#2E86C1; letter-spacing: 2px;">${otp}</h1>
-        <p>This OTP will expire in <strong>10 minutes</strong>.</p>
-      </div>
-    `,
-  };
-
-  await transporter.sendMail(mailOptions);
-  console.log(`📧 OTP sent to ${to}`);
-}
+import { sendOtpEmail } from "../utils/mailer.js";
 
 // 🔑 Helper: Sign JWT
 function sign(user) {
@@ -73,6 +41,7 @@ export async function register(req, res, next) {
       isVerified: false,
     });
 
+    // Send OTP email
     await sendOtpEmail(email, otp);
 
     return res.status(201).json({
@@ -113,7 +82,6 @@ export async function verifyOtp(req, res, next) {
       user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
-    console.error("❌ Register error:", err);
     next(err);
   }
 }
@@ -144,7 +112,6 @@ export async function login(req, res, next) {
       user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
-    console.error("❌ Register error:", err);
     next(err);
   }
 }
