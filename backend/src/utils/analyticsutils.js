@@ -1,4 +1,4 @@
-import Report from "../../models/Report.js";
+import Report from "../models/report.js";
 
 export async function hotspotByGrid({ size = 0.05 } = {}) {
   // simple grid binning for heatmap
