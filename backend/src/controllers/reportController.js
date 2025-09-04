@@ -1,5 +1,5 @@
-import Report from "../../models/Report.js";
-import { toLocation } from "../../utils/geoUtils.js";
+import Report from "../models/report.js";
+import { toLocation } from "../utils/geoutils.js";
 import { notify } from "../utils/notifier.js";
 
 export async function createReport(req, res, next) {
