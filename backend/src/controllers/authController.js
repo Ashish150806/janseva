@@ -1,13 +1,46 @@
+import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/user.js";
-import { sendOtpEmail } from "../utils/mailer.js";
+import { env } from "../config/env.js"; // make sure env has EMAIL_USER + EMAIL_PASS
+
+// ✉️ Setup transporter directly here
+const transporter = nodemailer.createTransport({
+  host: env.SMTP_HOST,
+  port: env.SMTP_PORT,
+  secure: true, // true for 465, false for 587
+  auth: {
+    user: env.EMAIL_USER,
+    pass: env.EMAIL_PASS,
+  },
+});
+
+// ✉️ Function to send OTP
+async function sendOtpEmail(to, otp) {
+  const mailOptions = {
+    from: `"JanSeva Platform" <${env.EMAIL_USER}>`,
+    to,
+    subject: "Your OTP Verification Code",
+    text: `Your OTP is: ${otp}. It will expire in 10 minutes.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9;">
+        <h2 style="color: #2E86C1;">Welcome to JanSeva 👋</h2>
+        <p>Please use the following OTP to verify your account:</p>
+        <h1 style="color:#2E86C1; letter-spacing: 2px;">${otp}</h1>
+        <p>This OTP will expire in <strong>10 minutes</strong>.</p>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log(`📧 OTP sent to ${to}`);
+}
 
 // 🔑 Helper: Sign JWT
 function sign(user) {
   return jwt.sign(
     { id: user._id, role: user.role, name: user.name },
-    process.env.JWT_SECRET,
+    env.JWT_SECRET,
     { expiresIn: "7d" }
   );
 }
@@ -26,10 +59,10 @@ export async function register(req, res, next) {
       return res.status(400).json({ message: "Email already registered" });
     }
 
-    // Generate OTP and hash before saving
+    // Generate OTP and hash
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
-    const otpExpires = Date.now() + 10 * 60 * 1000; // 10 min expiry
+    const otpExpires = Date.now() + 10 * 60 * 1000; // 10 min
 
     const user = await User.create({
       name,
@@ -41,7 +74,6 @@ export async function register(req, res, next) {
       isVerified: false,
     });
 
-    // Send OTP via email
     await sendOtpEmail(email, otp);
 
     return res.status(201).json({
@@ -52,7 +84,7 @@ export async function register(req, res, next) {
   }
 }
 
-// 📌 Verify OTP and activate account
+// 📌 Verify OTP
 export async function verifyOtp(req, res, next) {
   try {
     const { email, otp } = req.body;
@@ -64,7 +96,6 @@ export async function verifyOtp(req, res, next) {
     const user = await User.findOne({ email }).select("+otp +otpExpires");
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Hash input OTP and compare
     const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
 
     if (user.otp !== otpHash || user.otpExpires < Date.now()) {
@@ -87,7 +118,7 @@ export async function verifyOtp(req, res, next) {
   }
 }
 
-// 📌 Login (only after verification)
+// 📌 Login
 export async function login(req, res, next) {
   try {
     const { email, password } = req.body;

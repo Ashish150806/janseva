@@ -4,9 +4,9 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import nodemailer from "nodemailer"; // 👈 Add this
 import connectDB from "./config/db.js";
 import errorHandler from "./middleware/errorHandler.js";
-import transporter from "./utils/mailer.js"; // ✅ import transporter to check email server
 
 // Routes
 import authRoutes from "./routes/authRoutes.js";
@@ -47,6 +47,17 @@ app.use("/api/v1/messages", messageRoutes);
 // Central error handler
 app.use(errorHandler);
 
+// ✅ Configure Nodemailer directly here
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: process.env.SMTP_PORT || 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
@@ -57,7 +68,7 @@ app.listen(PORT, () => {
   console.log("🔑 Email Pass:", process.env.EMAIL_PASS ? "✅ Loaded" : "❌ Missing");
 
   // ✅ Verify email server
-  transporter.verify((err, success) => {
+  transporter.verify((err) => {
     if (err) {
       console.error("❌ Email server connection error:", err);
     } else {
