@@ -1,4 +1,4 @@
-import Report from "../../models/Report.js";
+import Report from "../models/report.js";
 
 export async function myTasks(req, res, next) {
   try {
