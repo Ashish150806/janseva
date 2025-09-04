@@ -1,6 +1,6 @@
-// backend/src/models/user.js
+// backend/src/models/User.js
 import mongoose from "mongoose";
-import bcrypt from "bcrypt.js";
+import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema(
   {

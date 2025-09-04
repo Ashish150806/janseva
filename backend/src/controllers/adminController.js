@@ -1,4 +1,4 @@
-import Report from "../../models/report.js";
+import Report from "../../models/Report.js";
 import User from "../../models/user.js";
 import { hotspotByGrid, slaStats } from "../../utils/analyticsUtils.js";
 import { notify } from "../utils/notifier.js";
