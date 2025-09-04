@@ -6,6 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
 import errorHandler from "./middleware/errorHandler.js";
+import transporter from "./utils/mailer.js"; // ✅ import transporter to check email server
 
 // Routes
 import authRoutes from "./routes/authRoutes.js";
@@ -14,7 +15,9 @@ import contractorRoutes from "./routes/contractorRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 
+// Load env vars
 dotenv.config();
+
 const app = express();
 
 // DB connection
@@ -35,7 +38,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
 app.get("/", (_req, res) => res.send("Civic Issue Platform API running ✅"));
 
 // API routes
-app.use("/api/v1/auth", authRoutes);       // includes register, verify-otp, login
+app.use("/api/v1/auth", authRoutes); // register, verify-otp, login
 app.use("/api/v1/reports", reportRoutes);
 app.use("/api/v1/contractor", contractorRoutes);
 app.use("/api/v1/admin", adminRoutes);
@@ -46,4 +49,19 @@ app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 API listening on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 API listening on port ${PORT}`);
+
+  // ✅ Check env variables
+  console.log("📧 Email User:", process.env.EMAIL_USER || "❌ Not found");
+  console.log("🔑 Email Pass:", process.env.EMAIL_PASS ? "✅ Loaded" : "❌ Missing");
+
+  // ✅ Verify email server
+  transporter.verify((err, success) => {
+    if (err) {
+      console.error("❌ Email server connection error:", err);
+    } else {
+      console.log("✅ Email server is ready to send messages");
+    }
+  });
+});
