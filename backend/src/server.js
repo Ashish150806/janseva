@@ -1,3 +1,4 @@
+// backend/src/server.js
 import path from "path";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
@@ -18,40 +19,55 @@ import messageRoutes from "./routes/messageRoutes.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env from project root
+// Load .env (fallbacks to environment variables in deployment)
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
 
-// ✅ Connect DB
+// ✅ Connect to MongoDB
 connectDB();
 
 // ✅ Middleware
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || "*", credentials: true }));
+app.use(
+  cors({
+    origin:
+      process.env.CLIENT_ORIGIN || "http://localhost:5173", // fallback to local frontend
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev"));
+app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 
 // ✅ Static uploads
 app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
 
 // ✅ Health check
-app.get("/", (_req, res) => res.send("Civic Issue Platform API running ✅"));
+app.get("/", (_req, res) =>
+  res.send("Civic Issue Platform API running ✅")
+);
 
-// ✅ Routes
+// ✅ API Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/reports", reportRoutes);
 app.use("/api/v1/contractor", contractorRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/messages", messageRoutes);
 
-// ✅ Error handler
+// ✅ Error handler (catch-all)
 app.use(errorHandler);
 
 // ✅ Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 API listening on port ${PORT}`);
-  console.log("📧 Email User:", process.env.EMAIL_USER || "❌ Not found");
-  console.log("🔑 Email Pass:", process.env.EMAIL_PASS ? "✅ Loaded" : "❌ Missing");
+  console.log(
+    `📧 Email User: ${process.env.EMAIL_USER || "❌ Not found"}`
+  );
+  console.log(
+    `🔑 Email Pass: ${process.env.EMAIL_PASS ? "✅ Loaded" : "❌ Missing"}`
+  );
+  console.log(
+    `🌐 Frontend allowed origin: ${process.env.CLIENT_ORIGIN || "localhost"}`
+  );
 });

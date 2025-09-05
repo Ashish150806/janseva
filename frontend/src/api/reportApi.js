@@ -1,7 +1,9 @@
 // src/api/reportApi.js
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/v1/reports";
+// Automatically switch between local and deployed backend
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+const API_URL = `${BASE_URL}/reports`;
 
 // ✅ Get all reports
 async function getReports() {
