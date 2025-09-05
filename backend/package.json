@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js",
+    "start": "node index.js",
     "lint": "eslint ."
+    
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

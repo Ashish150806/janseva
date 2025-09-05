@@ -1,6 +1,6 @@
 import Report from "../models/report.js";
 import User from "../models/user.js";
-import { hotspotByGrid, slaStats } from "../utils/analyticsUtils.js";
+import { hotspotByGrid, slaStats } from "../utils/analyticsutils.js";
 import { notify } from "../utils/notifier.js";
 
 export async function allReports(req, res, next) {
